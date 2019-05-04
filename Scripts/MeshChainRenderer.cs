@@ -211,12 +211,15 @@ public abstract class MeshChainRenderer : MonoBehaviour
     /// <param name="newColor">The new color for the curve to display</param>
     public void SetTotalColor(Color newColor)
     {
-        var flatColor = newColor;
-        flatColor.a = 1.0f;
-        m_Color = new Gradient { alphaKeys = new []{ new GradientAlphaKey(newColor.a, 0), new GradientAlphaKey(newColor.a, 1), }, 
-                                colorKeys = new []{ new GradientColorKey(flatColor, 0), new GradientColorKey(flatColor, 1) }, 
-                                mode = GradientMode.Blend };
-        UpdateColors();
+        // UpdateColors() is expensive - don't apply changes unless color actually changed
+        if (!newColor.Equals(m_Color)) {
+            var flatColor = newColor;
+            flatColor.a = 1.0f;
+            m_Color = new Gradient { alphaKeys = new []{ new GradientAlphaKey(newColor.a, 0), new GradientAlphaKey(newColor.a, 1), }, 
+                                    colorKeys = new []{ new GradientColorKey(flatColor, 0), new GradientColorKey(flatColor, 1) }, 
+                                    mode = GradientMode.Blend };
+            UpdateColors();
+        }
     }
 
     void OnValidate()
